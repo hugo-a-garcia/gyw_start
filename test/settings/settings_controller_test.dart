@@ -75,6 +75,27 @@ void main() {
     });
   });
 
+  group('Shared preferences should', () {
+    (SharedPreferencesAsync, FakeSharedPreferencesAsync) getPreferences() {
+      final FakeSharedPreferencesAsync store = FakeSharedPreferencesAsync();
+      SharedPreferencesAsyncPlatform.instance = store;
+      final SharedPreferencesAsync preferences = SharedPreferencesAsync();
+      return (preferences, store);
+    }
+
+    test('set and get theme_mode value', () async {
+      final (
+        SharedPreferencesAsync preferences,
+        FakeSharedPreferencesAsync store,
+      ) = getPreferences();
+      expect(await preferences.getInt(SettingsKeys.themeMode.name), null);
+      await preferences.setInt('theme_mode', ThemeMode.dark.index);
+      await preferences.setInt(
+          SettingsKeys.themeMode.name, ThemeMode.dark.index);
+      expect(await preferences.getInt('theme_mode'), ThemeMode.dark.index);
+    });
+  });
+
   group('Async', () {
     (SharedPreferencesAsync, FakeSharedPreferencesAsync) getPreferences() {
       final FakeSharedPreferencesAsync store = FakeSharedPreferencesAsync();

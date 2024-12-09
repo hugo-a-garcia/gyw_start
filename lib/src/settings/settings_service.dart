@@ -19,4 +19,6 @@ class SettingsService {
   }
 }
 
-// I am leaving in (morning, afternoon, evening) and will be back on (day of the week) in the (morning, afternoon, evening). 
+enum SettingsKeys {
+  themeMode,
+}
