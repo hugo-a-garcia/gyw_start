@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// A service that stores and retrieves user settings.
 ///
@@ -6,6 +7,8 @@ import 'package:flutter/material.dart';
 /// persist the user settings locally, use the shared_preferences package. If
 /// you'd like to store settings on a web server, use the http package.
 class SettingsService {
+  final SharedPreferencesAsync prefs = SharedPreferencesAsync();
+
   /// Loads the User's preferred ThemeMode from local or remote storage.
   Future<ThemeMode> themeMode() async => ThemeMode.system;
 
@@ -15,3 +18,5 @@ class SettingsService {
     // http package to persist settings over the network.
   }
 }
+
+// I am leaving in (morning, afternoon, evening) and will be back on (day of the week) in the (morning, afternoon, evening). 
