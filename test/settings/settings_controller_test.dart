@@ -2,27 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gyw_start/src/app.dart';
 import 'package:gyw_start/src/settings/settings_controller.dart';
-import 'package:gyw_start/src/settings/settings_service.dart';
-import 'package:shared_preferences/src/shared_preferences_async.dart';
-
-class FakeSettingService implements SettingsService {
-  ThemeMode _themeMode = ThemeMode.system;
-
-  @override
-  SharedPreferencesAsync get prefs => SharedPreferencesAsync();
-
-  // Loads the User's preferred ThemeMode from local or remote storage.
-  @override
-  Future<ThemeMode> themeMode() async => _themeMode;
-
-  // Persists the user's preferred ThemeMode to local or remote storage.
-  @override
-  Future<void> updateThemeMode(ThemeMode theme) async {
-    // Use the shared_preferences package to persist settings locally or the
-    // http package to persist settings over the network.
-    _themeMode = theme;
-  }
-}
+import 'fake_settings_service.dart';
 
 void main() {
   group('ServiceController.updateThemeMode should', () {
@@ -34,17 +14,17 @@ void main() {
 
       //Test
       expect(controller.themeMode, ThemeMode.system);
-      expect(service._themeMode, ThemeMode.system);
+      expect(await service.themeMode(), ThemeMode.system);
       await controller.updateThemeMode(ThemeMode.dark);
       expect(controller.themeMode, ThemeMode.dark);
-      expect(service._themeMode, ThemeMode.dark);
+      expect(await service.themeMode(), ThemeMode.dark);
     });
 
     testWidgets('Inform the UI fo the value', (WidgetTester tester) async {
       final service = FakeSettingService();
       final controller = SettingsController(service);
       await controller.loadSettings();
-      final myApp = MyApp(settingsController: controller);
+      final myApp = GYWStartApp(settingsController: controller);
 
       await tester.pumpWidget(myApp);
       expect(tester.widget<MaterialApp>(find.byType(MaterialApp)).themeMode,
