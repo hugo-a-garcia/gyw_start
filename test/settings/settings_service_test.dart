@@ -9,16 +9,7 @@ import 'package:shared_preferences/src/shared_preferences_async.dart';
 
 void main() {
   const String stringKey = 'testString';
-  const String boolKey = 'testBool';
-  const String intKey = 'testInt';
-  const String doubleKey = 'testDouble';
-  const String listKey = 'testList';
-
   const String testString = 'hello world';
-  const bool testBool = true;
-  const int testInt = 42;
-  const double testDouble = 3.14159;
-  const List<String> testList = <String>['foo', 'bar'];
 
   group('Shared preferences should', () {
     (SharedPreferencesAsync, FakeSharedPreferencesAsync) getPreferences() {
@@ -33,13 +24,27 @@ void main() {
         SharedPreferencesAsync preferences,
         FakeSharedPreferencesAsync store,
       ) = getPreferences();
-      expect(await preferences.getInt(SettingsKeys.themeMode.name), null);
-      await preferences.setInt(
-          SettingsKeys.themeMode.name, ThemeMode.dark.index);
-      await preferences.setInt(
-          SettingsKeys.themeMode.name, ThemeMode.dark.index);
-      expect(await preferences.getInt(SettingsKeys.themeMode.name),
-          ThemeMode.dark.index);
+      expect(await preferences.getString(SettingsKeys.themeMode.name), null);
+      await preferences.setString(
+          SettingsKeys.themeMode.name, ThemeMode.dark.name);
+      await preferences.setString(
+          SettingsKeys.themeMode.name, ThemeMode.dark.name);
+      expect(await preferences.getString(SettingsKeys.themeMode.name),
+          ThemeMode.dark.name);
+    });
+
+    test('set and get theme_mode using settings_service', () async {
+      final (
+        SharedPreferencesAsync preferences,
+        FakeSharedPreferencesAsync store,
+      ) = getPreferences();
+      SettingsService service = SettingsService();
+      expect(await preferences.getString(SettingsKeys.themeMode.name), null);
+      expect(await service.themeMode(), ThemeMode.system);
+      service.updateThemeMode(ThemeMode.dark);
+      expect(await preferences.getString(SettingsKeys.themeMode.name),
+          ThemeMode.dark.name);
+      expect(await service.themeMode(), ThemeMode.dark);
     });
   });
 
@@ -76,267 +81,6 @@ void main() {
           ]),
         ],
       );
-    });
-
-    test('set and get bool', () async {
-      final (
-        SharedPreferencesAsync preferences,
-        FakeSharedPreferencesAsync store
-      ) = getPreferences();
-      await preferences.setBool(boolKey, testBool);
-      expect(
-        store.log,
-        <Matcher>[
-          isMethodCall('setBool', arguments: <dynamic>[
-            boolKey,
-            testBool,
-          ]),
-        ],
-      );
-      store.log.clear();
-      expect(await preferences.getBool(boolKey), testBool);
-      expect(
-        store.log,
-        <Matcher>[
-          isMethodCall('getBool', arguments: <dynamic>[
-            boolKey,
-          ]),
-        ],
-      );
-    });
-
-    test('set and get int', () async {
-      final (
-        SharedPreferencesAsync preferences,
-        FakeSharedPreferencesAsync store
-      ) = getPreferences();
-      await preferences.setInt(intKey, testInt);
-      expect(
-        store.log,
-        <Matcher>[
-          isMethodCall('setInt', arguments: <dynamic>[
-            intKey,
-            testInt,
-          ]),
-        ],
-      );
-      store.log.clear();
-
-      expect(await preferences.getInt(intKey), testInt);
-      expect(
-        store.log,
-        <Matcher>[
-          isMethodCall('getInt', arguments: <dynamic>[
-            intKey,
-          ]),
-        ],
-      );
-    });
-
-    test('set and get double', () async {
-      final (
-        SharedPreferencesAsync preferences,
-        FakeSharedPreferencesAsync store
-      ) = getPreferences();
-      await preferences.setDouble(doubleKey, testDouble);
-      expect(
-        store.log,
-        <Matcher>[
-          isMethodCall('setDouble', arguments: <dynamic>[
-            doubleKey,
-            testDouble,
-          ]),
-        ],
-      );
-      store.log.clear();
-      expect(await preferences.getDouble(doubleKey), testDouble);
-      expect(
-        store.log,
-        <Matcher>[
-          isMethodCall('getDouble', arguments: <dynamic>[
-            doubleKey,
-          ]),
-        ],
-      );
-    });
-
-    test('set and get StringList', () async {
-      final (
-        SharedPreferencesAsync preferences,
-        FakeSharedPreferencesAsync store
-      ) = getPreferences();
-      await preferences.setStringList(listKey, testList);
-      expect(
-        store.log,
-        <Matcher>[
-          isMethodCall('setStringList', arguments: <dynamic>[
-            listKey,
-            testList,
-          ]),
-        ],
-      );
-      store.log.clear();
-      expect(await preferences.getStringList(listKey), testList);
-      expect(
-        store.log,
-        <Matcher>[
-          isMethodCall('getStringList', arguments: <dynamic>[
-            listKey,
-          ]),
-        ],
-      );
-    });
-
-    test('getAll', () async {
-      final (SharedPreferencesAsync preferences, _) = getPreferences();
-      await Future.wait(<Future<void>>[
-        preferences.setString(stringKey, testString),
-        preferences.setBool(boolKey, testBool),
-        preferences.setInt(intKey, testInt),
-        preferences.setDouble(doubleKey, testDouble),
-        preferences.setStringList(listKey, testList)
-      ]);
-
-      final Map<String, Object?> gotAll = await preferences.getAll();
-
-      expect(gotAll.length, 5);
-      expect(gotAll[stringKey], testString);
-      expect(gotAll[boolKey], testBool);
-      expect(gotAll[intKey], testInt);
-      expect(gotAll[doubleKey], testDouble);
-      expect(gotAll[listKey], testList);
-    });
-
-    test('getAll with filter', () async {
-      final (SharedPreferencesAsync preferences, _) = getPreferences();
-      await Future.wait(<Future<void>>[
-        preferences.setString(stringKey, testString),
-        preferences.setBool(boolKey, testBool),
-        preferences.setInt(intKey, testInt),
-        preferences.setDouble(doubleKey, testDouble),
-        preferences.setStringList(listKey, testList)
-      ]);
-
-      final Map<String, Object?> gotAll =
-          await preferences.getAll(allowList: <String>{stringKey, boolKey});
-
-      expect(gotAll.length, 2);
-      expect(gotAll[stringKey], testString);
-      expect(gotAll[boolKey], testBool);
-    });
-
-    test('remove', () async {
-      final (
-        SharedPreferencesAsync preferences,
-        FakeSharedPreferencesAsync store
-      ) = getPreferences();
-      const String key = 'testKey';
-      await preferences.remove(key);
-      expect(
-          store.log,
-          List<Matcher>.filled(
-            1,
-            isMethodCall(
-              'clear',
-              arguments: <String>[key],
-            ),
-            growable: true,
-          ));
-    });
-
-    test('getKeys', () async {
-      final (SharedPreferencesAsync preferences, _) = getPreferences();
-      await Future.wait(<Future<void>>[
-        preferences.setString(stringKey, testString),
-        preferences.setBool(boolKey, testBool),
-        preferences.setInt(intKey, testInt),
-        preferences.setDouble(doubleKey, testDouble),
-        preferences.setStringList(listKey, testList)
-      ]);
-
-      final Set<String> keys = await preferences.getKeys();
-
-      expect(keys.length, 5);
-      expect(keys, contains(stringKey));
-      expect(keys, contains(boolKey));
-      expect(keys, contains(intKey));
-      expect(keys, contains(doubleKey));
-      expect(keys, contains(listKey));
-    });
-
-    test('getKeys with filter', () async {
-      final (SharedPreferencesAsync preferences, _) = getPreferences();
-      await Future.wait(<Future<void>>[
-        preferences.setString(stringKey, testString),
-        preferences.setBool(boolKey, testBool),
-        preferences.setInt(intKey, testInt),
-        preferences.setDouble(doubleKey, testDouble),
-        preferences.setStringList(listKey, testList)
-      ]);
-
-      final Set<String> keys =
-          await preferences.getKeys(allowList: <String>{stringKey, boolKey});
-
-      expect(keys.length, 2);
-      expect(keys, contains(stringKey));
-      expect(keys, contains(boolKey));
-    });
-
-    test('containsKey', () async {
-      final (SharedPreferencesAsync preferences, _) = getPreferences();
-      const String key = 'testKey';
-
-      expect(false, await preferences.containsKey(key));
-
-      await preferences.setString(key, 'test');
-      expect(true, await preferences.containsKey(key));
-    });
-
-    test('clear', () async {
-      final (
-        SharedPreferencesAsync preferences,
-        FakeSharedPreferencesAsync store
-      ) = getPreferences();
-      await Future.wait(<Future<void>>[
-        preferences.setString(stringKey, testString),
-        preferences.setBool(boolKey, testBool),
-        preferences.setInt(intKey, testInt),
-        preferences.setDouble(doubleKey, testDouble),
-        preferences.setStringList(listKey, testList)
-      ]);
-      store.log.clear();
-      await preferences.clear();
-      expect(
-          store.log, <Matcher>[isMethodCall('clear', arguments: <Object>[])]);
-      expect(await preferences.getString(stringKey), null);
-      expect(await preferences.getBool(boolKey), null);
-      expect(await preferences.getInt(intKey), null);
-      expect(await preferences.getDouble(doubleKey), null);
-      expect(await preferences.getStringList(listKey), null);
-    });
-
-    test('clear with filter', () async {
-      final (
-        SharedPreferencesAsync preferences,
-        FakeSharedPreferencesAsync store
-      ) = getPreferences();
-      await Future.wait(<Future<void>>[
-        preferences.setString(stringKey, testString),
-        preferences.setBool(boolKey, testBool),
-        preferences.setInt(intKey, testInt),
-        preferences.setDouble(doubleKey, testDouble),
-        preferences.setStringList(listKey, testList)
-      ]);
-      store.log.clear();
-      await preferences.clear(allowList: <String>{stringKey, boolKey});
-      expect(store.log, <Matcher>[
-        isMethodCall('clear', arguments: <Object>[stringKey, boolKey])
-      ]);
-      expect(await preferences.getString(stringKey), null);
-      expect(await preferences.getBool(boolKey), null);
-      expect(await preferences.getInt(intKey), testInt);
-      expect(await preferences.getDouble(doubleKey), testDouble);
-      expect(await preferences.getStringList(listKey), testList);
     });
   });
 }

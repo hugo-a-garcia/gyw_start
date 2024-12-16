@@ -7,20 +7,16 @@ class SettingsService {
 
   /// Loads the User's preferred ThemeMode from local or remote storage.
   Future<ThemeMode> themeMode() async {
-    return ThemeMode.values.byName(
+    String aString =
         await SharedPreferencesAsync().getString(SettingsKeys.themeMode.name) ??
-            ThemeMode.system.name);
-    // return Future.value(
-    //   ThemeMode.values.elementAt(
-    //       await SharedPreferencesAsync().getInt(SettingsKeys.themeMode.name) ??
-    //           0),
-    // );
+            ThemeMode.system.name;
+    return ThemeMode.values.byName(aString);
   }
 
   /// Persists the user's preferred ThemeMode to local or remote storage.
   Future<void> updateThemeMode(ThemeMode theme) async {
-    // Use the shared_preferences package to persist settings locally or the
-    await prefs.setInt(SettingsKeys.themeMode.name, theme.index);
+    // Use the shared_preferences package to persist settings locally
+    await prefs.setString(SettingsKeys.themeMode.name, theme.name);
   }
 }
 
