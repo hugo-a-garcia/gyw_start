@@ -16,7 +16,7 @@ dependencies:
     sdk: flutter
 # CHANGE TO YOUR LOCAL flutter_gyw PATH
   flutter_gyw:
-    path: /users/hugo/gyw/git/flutter_gyw
+    path: /home/hugo/gyw/git/flutter_gyw
   shared_preferences: ^2.3.3
   go_router: ^14.7.1
 
