@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gyw_start/src/app.dart';
-import 'package:gyw_start/src/settings/settings_controller.dart';
+import 'package:gyw_start/src/ui/core/settings/settings_controller.dart';
 import 'fake_settings_service.dart';
 
 void main() {

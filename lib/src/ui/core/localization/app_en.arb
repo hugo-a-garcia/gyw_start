@@ -1,4 +1,5 @@
 {
+  "@@locale": "en",
   "appTitle": "gyw_start",
   "@appTitle": {
     "description": "The title of the application"

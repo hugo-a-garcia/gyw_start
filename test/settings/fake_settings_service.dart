@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gyw_start/src/settings/settings_service.dart';
+import 'package:gyw_start/src/ui/core/settings/settings_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class FakeSettingService implements SettingsService {
