@@ -19,6 +19,7 @@ dependencies:
     path: /home/hugo/gyw/git/flutter_gyw
   shared_preferences: ^2.3.3
   intl: any
+  flutter_riverpod: ^2.6.1
 
 dev_dependencies:
   flutter_test:
@@ -26,6 +27,8 @@ dev_dependencies:
 
   flutter_lints: ^5.0.0
   shared_preferences_platform_interface: ^2.4.1
+  custom_lint: ^0.7.5
+  riverpod_lint: ^2.6.5
 
 flutter:
   uses-material-design: true
