@@ -7,32 +7,6 @@ final sharedPreferencesProvider = Provider<SharedPreferences>(
   (ref) => throw UnimplementedError(),
 );
 
-final countProvider = NotifierProvider<CountNotifier, int>(CountNotifier.new);
-
-class CountNotifier extends Notifier<int> {
-  @override
-  int build() {
-    // We'd like to obtain an instance of shared preferences synchronously in a provider
-    final preferences = ref.watch(sharedPreferencesProvider);
-
-    // Load the initial counter value from persistent storage on start,
-    // or fallback to 0 if it doesn't exist.
-    final currentValue = preferences.getInt('count') ?? 0;
-
-    // on change save the value
-    listenSelf((prev, next) {
-      preferences.setInt('count', next);
-    });
-    return currentValue;
-  }
-
-  // After a click, increment the counter state
-  void increment() => state++;
-}
-
-final themeProvider =
-    NotifierProvider<ThemeNotifier, ThemeMode>(ThemeNotifier.new);
-
 class ThemeNotifier extends Notifier<ThemeMode> {
   @override
   build() {
@@ -45,5 +19,23 @@ class ThemeNotifier extends Notifier<ThemeMode> {
     return ThemeMode.values.byName(themeMode);
   }
 
-  void changeTheme(ThemeMode themeMode) => state = themeMode;
+  void updateTheme(ThemeMode themeMode) => state = themeMode;
 }
+
+final themeProvider =
+    NotifierProvider<ThemeNotifier, ThemeMode>(ThemeNotifier.new);
+
+class DefaultDeviceNotifier extends Notifier<String> {
+  @override
+  String build() {
+    final preferences = ref.watch(sharedPreferencesProvider);
+    final defaultDevice = preferences.getString('defaulltDevice') ?? '';
+    listenSelf((prev, next) {
+      preferences.setString('defaultDevice', next);
+    });
+    return defaultDevice;
+  }
+}
+
+final defaultDeviceProvider =
+    NotifierProvider<DefaultDeviceNotifier, String>(DefaultDeviceNotifier.new);

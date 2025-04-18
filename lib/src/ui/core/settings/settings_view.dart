@@ -12,18 +12,39 @@ class SettingsView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var themeMode = ref.watch(themeProvider);
+    // var themeMode = ref.watch(themeProvider);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Settings'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: DropdownButton<ThemeMode>(
-          value: themeMode,
+      body: Column(
+        children: [
+          ThemeModeDropdown(),
+          DefaultDevice(),
+        ],
+      ),
+    );
+  }
+}
+
+class ThemeModeDropdown extends ConsumerWidget {
+  const ThemeModeDropdown({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Card(
+      child: ListTile(
+        title: Text(
+          'Application Theme : ',
+        ),
+        trailing: DropdownButton<ThemeMode>(
+          value: ref.watch(themeProvider),
           onChanged: (ThemeMode? value) {
-            themeMode = value ?? ThemeMode.system;
-            ref.read(themeProvider.notifier).changeTheme(themeMode);
+            ref
+                .read(themeProvider.notifier)
+                .updateTheme(value ?? ThemeMode.system);
           },
           items: const [
             DropdownMenuItem(
@@ -39,6 +60,23 @@ class SettingsView extends ConsumerWidget {
               child: Text('Dark Theme'),
             )
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class DefaultDevice extends ConsumerWidget {
+  const DefaultDevice({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Card(
+      child: ListTile(
+        title: Text('Default Device : '),
+        trailing: ElevatedButton(
+          onPressed: () {},
+          child: Text('FFAA1234'),
         ),
       ),
     );
